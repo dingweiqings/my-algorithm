@@ -1,5 +1,7 @@
 package org.kurt.datastructure.heap;
 
+import org.kurt.utils.DataUtils;
+
 /**
  * 手写堆,
  * 堆结构,实际上是完全二叉树,不过以数组形式存储
@@ -8,41 +10,50 @@ public class MyHeap {
     private int size;
     private int[] arr;
 
+    public MyHeap(int[] arr) {
+        this.arr = arr;
+    }
+
+    public void sort(){
+        for (int i = 0; i < arr.length; i++) {
+            heapInsert(arr[i]);
+        }
+        while (size-->0){
+            swap(0,size);
+            heapify(0);
+        }
+    }
+
+    public  int[] getArr(){
+        return  arr;
+    }
+
     /**
      * 把参数放到index位置
      * @param arr
      * @param index
      */
-    private void heapfiy(int []  arr ,int index){
+    private void heapify(int index) {
         //从index开始向下调整
         //调整到什么时候停
-        int large = Integer.MAX_VALUE;
-        int largeLeft = Integer.MIN_VALUE;
-        int largeRight = Integer.MIN_VALUE;
-        int child =0;
+        int child = 0;
         while (index < size) {
-            largeLeft = 2 * index < size ? arr[2 * index] : Integer.MIN_VALUE;
-            largeRight = 2 * index + 1 < size ? arr[2 * index + 1] : Integer.MIN_VALUE;
-            if (largeLeft > largeRight) {
-                child = 2 * index;
-                large = largeLeft;
-            } else {
-                child = 2 * index + 1;
-                large = largeRight;
-            }
-            //如果比子节点小,则调整,
-            if (arr[index] < large) {
-                swap(arr, index, child);
-            }else {//不小，说明已经到位了
+            child = 2 * index + 1;
+            if (child >= size) {
                 break;
             }
-
+            child = child + 1 < size && arr[child + 1] > arr[child] ? child + 1 : child;
+            if (arr[index] < arr[child]) {
+                swap(index, child);
+            } else {
+                break;
+            }
             index = child;
         }
 
     }
 
-    private void swap(int arr[], int a, int b) {
+    private void swap( int a, int b) {
         int tmp = arr[a];
         arr[a] = arr[b];
         arr[b] = tmp;
@@ -53,14 +64,33 @@ public class MyHeap {
      * @param arr
      * @param value
      */
-    private void heapInsert(int[] arr, int value) {
+    private void heapInsert(int value) {
         arr[size++] = value;
         int index = size - 1;
         while (arr[index] > arr[(index - 1) / 2]) {
-            swap(arr, index, (index - 1) / 2);
+            swap(index, (index - 1) / 2);
             index = (index - 1) / 2;
         }
     }
 
+    private boolean check(int[] arr) {
+        for (int i = 0; i < arr.length - 1; i++) {
+            if (arr[i] > arr[i + 1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 10000; i++) {
+            MyHeap heap = new MyHeap(DataUtils.randomArray());
+            heap.sort();
+            if(!heap.check(heap.arr)){
+                System.out.println("ERROR");
+            }
+        }
+        System.out.println("PASS");
+    }
 
 }

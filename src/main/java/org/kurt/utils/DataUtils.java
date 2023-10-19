@@ -3,6 +3,24 @@ package org.kurt.utils;
 import java.util.List;
 
 public class DataUtils {
+
+    public static class TreeNode<T> {
+        public TreeNode<T> left;
+        public TreeNode<T> right;
+        public T value;
+        public TreeNode<T> parent;
+
+        public TreeNode(TreeNode<T> left, TreeNode<T> right, T value) {
+            this.left = left;
+            this.right = right;
+            this.value = value;
+        }
+
+        public TreeNode(T value) {
+            this.value = value;
+        }
+    }
+
     public static int[] randomArray(int len, int maxValue) {
         int[] arr = new int[len];
         for (int i = 0; i < len; i++) {
@@ -43,14 +61,47 @@ public class DataUtils {
         return true;
     }
 
-    public static void main(String[] args) {
-        System.out.println(testListEquals(List.of(0,1,0),List.of(0,0,1)));
+    public static <T> String printTree(TreeNode<T> root) {
+        if (root == null) {
+            return null;
+        }
+        String child =root.value+"";
+        StringBuffer left = new StringBuffer();
+        StringBuffer right = new StringBuffer();
+        if (root.left != null) {
+            child += "/";
+        }
+        if (root.right != null) {
+            child += "\\";
+        }
+        if(root.left!=null || root.right!=null){
+            child+="\n";
+        }
+        if (root.left != null) {
+            child += printTree(root.left);
+        }
+        if (root.right != null) {
+            child += printTree(root.right);
+        }
+        return child;
     }
-
-    public static  void printArray(int[] arr){
-        System.out.println("testdata: [");
+    public static void main(String[] args) {
+        TreeNode<Integer> root = new TreeNode<>(1);
+        root.left = new TreeNode<>(2);
+        root.right = new TreeNode<>(3);
+        System.out.println(printTree(root));
+    }
+    public static  void printArray(String msg , int[] arr){
+        System.out.print(msg + " testdata: [");
         for(int t:arr){
-            System.out.println(t+",");
+            System.out.print(t+",");
+        }
+        System.out.println("]");
+    }
+    public static  void printArray(int[] arr){
+        System.out.print("testdata: [");
+        for(int t:arr){
+            System.out.print(t+",");
         }
         System.out.println("]");
     }
